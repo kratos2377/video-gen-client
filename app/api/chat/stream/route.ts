@@ -1,14 +1,8 @@
 import { NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session) {
-      return new Response('Unauthorized', { status: 401 })
-    }
+
 
     const { idea, userId } = await request.json()
 
@@ -16,12 +10,10 @@ export async function POST(request: NextRequest) {
       return new Response('Idea is required', { status: 400 })
     }
 
-    // Create a readable stream for SSE
     const encoder = new TextEncoder()
     
     const stream = new ReadableStream({
       start(controller) {
-        // Send initial connection message
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify({ 
             type: 'connection', 
@@ -29,10 +21,8 @@ export async function POST(request: NextRequest) {
           })}\n\n`)
         )
 
-        // Simulate streaming LLM response
         const simulateStreamingResponse = async () => {
           try {
-            // Step 1: Analyzing idea
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ 
                 type: 'status', 
@@ -42,7 +32,6 @@ export async function POST(request: NextRequest) {
             )
             await new Promise(resolve => setTimeout(resolve, 1000))
 
-            // Step 2: Generating script
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ 
                 type: 'status', 
@@ -52,7 +41,6 @@ export async function POST(request: NextRequest) {
             )
             await new Promise(resolve => setTimeout(resolve, 500))
 
-            // Stream script content in chunks
             const scriptContent = `Here's a compelling script for your "${idea}" video:
 
 Scene 1: Hook (0-3 seconds)
@@ -90,7 +78,6 @@ This script is optimized for ${idea} and designed to maximize engagement and con
               await new Promise(resolve => setTimeout(resolve, 50))
             }
 
-            // Step 3: Generating images
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ 
                 type: 'status', 
@@ -100,13 +87,7 @@ This script is optimized for ${idea} and designed to maximize engagement and con
             )
             await new Promise(resolve => setTimeout(resolve, 1000))
 
-            // Send generated images
-            const images = [
-              'https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=Scene+1',
-              'https://via.placeholder.com/400x300/10B981/FFFFFF?text=Scene+2',
-              'https://via.placeholder.com/400x300/F59E0B/FFFFFF?text=Scene+3',
-              'https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Scene+4'
-            ]
+  
 
             for (let i = 0; i < images.length; i++) {
               controller.enqueue(
@@ -119,7 +100,6 @@ This script is optimized for ${idea} and designed to maximize engagement and con
               await new Promise(resolve => setTimeout(resolve, 500))
             }
 
-            // Step 4: Processing video
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ 
                 type: 'status', 
@@ -129,7 +109,6 @@ This script is optimized for ${idea} and designed to maximize engagement and con
             )
             await new Promise(resolve => setTimeout(resolve, 2000))
 
-            // Final completion
             controller.enqueue(
               encoder.encode(`data: ${JSON.stringify({ 
                 type: 'complete', 

@@ -1,16 +1,4 @@
-import { withAuth } from "next-auth/middleware"
-
-export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token
-    },
-  }
-)
-
+// No authentication middleware needed - direct access to all routes
 export const config = {
-  matcher: ['/chat/:path*']
+  matcher: []
 }

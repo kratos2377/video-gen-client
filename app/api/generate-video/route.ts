@@ -16,8 +16,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Idea is required' }, { status: 400 })
     }
 
-    // Here you would integrate with your backend API
-    // For now, we'll return mock data
     const mockResponse = {
       script: `Here's a compelling script for your "${idea}" video:
 
@@ -48,11 +46,10 @@ This script is optimized for ${idea} and designed to maximize engagement and con
         'https://via.placeholder.com/400x300/F59E0B/FFFFFF?text=Scene+3',
         'https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Scene+4'
       ],
-      video: null, // Would be populated by your backend
+      video: null, 
       status: 'completed'
     }
 
-    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     return NextResponse.json(mockResponse)
