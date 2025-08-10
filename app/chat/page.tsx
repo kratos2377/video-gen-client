@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/Input'
 import { ChatMessage } from '@/components/chat/ChatMessage'
 import { StreamingResponse } from '@/components/chat/StreamingResponse'
 import { Send, LogOut, Video, Image, FileText, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import {v4 as uuidv4} from 'uuid'
+
 
 interface Message {
   id: string
@@ -65,7 +67,7 @@ export default function ChatPage() {
     // Get or generate user ID
     let storedUserId = localStorage.getItem('userId')
     if (!storedUserId) {
-      storedUserId = 'user_' + Math.random().toString(36).substr(2, 9)
+      storedUserId = uuidv4()
       localStorage.setItem('userId', storedUserId)
     }
     setUserId(storedUserId)
@@ -185,7 +187,8 @@ export default function ChatPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: ideaToProcess
+          content: ideaToProcess,
+          userId: userId
         })
       })
 
@@ -229,10 +232,6 @@ export default function ChatPage() {
       setIsGenerating(false)
     }
 
-
-
-    console.log("AD SCRIPT IS")
-    console.log(streamingAdScript)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
