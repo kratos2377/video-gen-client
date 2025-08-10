@@ -31,7 +31,8 @@ interface SSEEvent {
     message?: {
       content?: string
       image?: {
-        imageBytes: string
+        imageUrl: string,
+        mimeType?: string
       }
       videoPath?: string,
       additionalAttributes?: Record<string, any>
@@ -118,9 +119,8 @@ export default function ChatPage() {
       case 'ai_image_generation_completed':
         setCurrentStatus('AI image is generated')
         setActiveGenerationStep('images')
-        if (messageData?.image?.imageBytes) {
-          const imageUrl = `data:image/jpeg;base64,${messageData.image.imageBytes}`
-          setStreamingImages(prev => [...prev, imageUrl])
+        if (messageData?.image?.imageUrl) {
+          setStreamingImages(prev => [...prev, messageData.image.imageUrl])
         }
         break
       case 'ai_image_generation_error':
@@ -215,6 +215,9 @@ export default function ChatPage() {
                 handleSSEMessage(data)
               } catch (err) {
                 console.error('Failed to parse SSE message:', err)
+                console.log("Data was: ")
+                console.log(line)
+                console.log(line.slice(6))
               }
             }
           }
